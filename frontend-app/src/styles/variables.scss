@@ -13,7 +13,13 @@ $container-with: 1200px;
 
 // Значения для светлой темы
 
-$light-mode-icon: url('/src/assets/light-mode.svg');
+//Иконки
+$dark-mode-icon: url('/src/assets/dark-mode.svg');
+$dark-mode-delete-all-icon: url('/src/assets/delete-light-mode.svg');
+$dark-mode-collapse-icon: url('/src/assets/light-mode-collapse-icon.svg');
+$dark-mode-expand-icon: url('/src/assets/light-mode-expand-icon.svg');
+
+
 
 $light-theme: (
         background-color-primary: #ebebeb,
@@ -24,7 +30,11 @@ $light-theme: (
 
 // Значения для темной темы
 
-$dark-mode-icon: url('/src/assets/dark-mode.svg');
+//Иконки
+$light-mode-icon: url('/src/assets/light-mode.svg');
+$light-mode-delete-all-icon: url('/src/assets/delete-dark-mode.svg');
+$light-mode-collapse-icon: url('/src/assets/dark-mode-collapse-icon.svg');
+$light-mode-expand-icon: url('/src/assets/dark-mode-expand-icon.svg');
 
 $dark-theme: (
         background-color-primary: #1e1e1e,

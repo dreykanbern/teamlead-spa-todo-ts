@@ -17,3 +17,25 @@
     padding: 10px;
   }
 }
+
+.delete-all-btn{
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.delete-all-icon {
+  width: 24px;
+  height: 24px;
+}
+
+//При переключении на светлую тему
+.delete-all-icon.light-icon {
+  background-image: $light-mode-delete-all-icon;
+}
+
+//При переключении на темную тему
+
+.delete-all-icon.dark-icon {
+  background-image: $dark-mode-delete-all-icon;
+}

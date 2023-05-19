@@ -37,4 +37,27 @@ body {
     color: map-get($values, text-primary-color);
     transition: all 0.3s ease;
   }
+  body[data-theme='#{$theme}'] div.modal-content {
+    background-color: map-get($values, background-color-secondary);
+    color: map-get($values, text-primary-color);
+    border-radius: $button-border-radius;
+    border: none;
+    transition: all 0.3s ease;
+  }
+
+  //Чекбоксы приложения
+  body[data-theme='#{$theme}'] .checkmark:after {
+    background-color: map-get($values, background-color-secondary);
+    transition: all 0.3s ease;
+  }
+
+  body[data-theme='#{$theme}'] .checkmark {
+    background-color: map-get($values, background-color-secondary);
+    transition: all 0.3s ease;
+  }
+
+  body[data-theme='#{$theme}'] :hover input ~ .checkmark {
+    background-color: map-get($values, accent-color);
+    transition: all 0.3s ease;
+  }
 }
