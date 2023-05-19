@@ -2,6 +2,10 @@
 @import "variables.scss";
 @import "mixins.scss";
 
+*{
+  font-family: $font-family;
+}
+
 button {
   /* Сброс стандартных стилей */
   padding: $button-padding;

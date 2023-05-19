@@ -32,9 +32,33 @@ $dark-theme: (
         accent-color: #3f3f3f,
         text-primary-color: #fafafa
 );
-
+//Все темы
 $themes: (
         'light': $light-theme,
         'dark': $dark-theme,
 );
 
+//Шрифты (едиснтвенный Roboto, но вдруг его будет мало)
+
+@font-face {
+  font-family: 'Roboto';
+  src: url('src/assets/fonts/Roboto-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Roboto';
+  src: url('src/assets/fonts/Roboto-Bold.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Roboto';
+  src: url('src/assets/fonts/Roboto-Thin.ttf') format('truetype');
+  font-weight: 100;
+  font-style: normal;
+}
+
+$font-family: 'Roboto', sans-serif;
