@@ -8,6 +8,6 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 @import "edit-task-page.scss";
 </style>

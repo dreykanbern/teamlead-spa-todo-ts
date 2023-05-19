@@ -1,5 +1,5 @@
 <template>
-
+  <div>Привет новый мир SPA</div>
 </template>
 
 <script>
@@ -8,6 +8,6 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 @import "home-page.scss";
 </style>
