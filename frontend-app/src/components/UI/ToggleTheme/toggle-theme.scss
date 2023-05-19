@@ -1,0 +1,22 @@
+@import "/src/styles/variables.scss";
+@import "/src/styles/mixins.scss";
+
+.theme-toggle-button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.theme-toggle-icon {
+  display: flex;
+  width: 24px;
+  height: 24px;
+}
+
+.theme-toggle-icon.light-icon {
+  background-image: $dark-mode-icon;
+}
+
+.theme-toggle-icon.dark-icon {
+  background-image: $light-mode-icon;
+}

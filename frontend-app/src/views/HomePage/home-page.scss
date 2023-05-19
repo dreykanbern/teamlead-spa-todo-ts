@@ -1,2 +1,19 @@
-@import "./src/styles/variables.scss";
-@import "./src/styles/mixins.scss";
+@import "/src/styles/variables.scss";
+@import "/src/styles/mixins.scss";
+
+.home-page-header {
+  display: flex;
+  justify-content: space-between;
+  &__navigation-header {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+  }
+}
+
+.navigation-header {
+  &__btn {
+    background-color: $primary-color;
+    padding: 10px;
+  }
+}

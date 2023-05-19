@@ -1,3 +1,36 @@
 @import "normalize.css";
 @import "variables.scss";
 @import "mixins.scss";
+
+button {
+  /* Сброс стандартных стилей */
+  padding: $button-padding;
+  border-radius: $button-border-radius;
+  font-size: $button-font-size;
+  border: none;
+  cursor: pointer;
+  background-color: $primary-color;
+  color: white;
+}
+
+body {
+  height: 100vh;
+  background-color: white;
+  color: black;
+}
+
+// Цикл для разделения значений светлой и темной темы
+
+@each $theme, $values in $themes {
+  body[data-theme='#{$theme}'] {
+    background-color: map-get($values, background-color-primary);
+    color: map-get($values, text-primary-color);
+    transition: all 0.3s ease;
+  }
+
+  body[data-theme='#{$theme}'] button {
+    background-color: map-get($values, accent-color);
+    color: map-get($values, text-primary-color);
+    transition: all 0.3s ease;
+  }
+}

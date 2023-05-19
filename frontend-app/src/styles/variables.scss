@@ -1,0 +1,40 @@
+//Основные цвета
+
+$primary-color: #42b983;
+$secondary-color: #35495e;
+
+//Значения кнопок
+$button-padding: 10px;
+$button-border-radius: 8px;
+$button-font-size: 20px;
+
+//Максимальная ширина контейнера
+$container-with: 1200px;
+
+// Значения для светлой темы
+
+$light-mode-icon: url('/src/assets/light-mode.svg');
+
+$light-theme: (
+        background-color-primary: #ebebeb,
+        background-color-secondary: #fafafa,
+        accent-color: #cacaca,
+        text-primary-color: #222
+);
+
+// Значения для темной темы
+
+$dark-mode-icon: url('/src/assets/dark-mode.svg');
+
+$dark-theme: (
+        background-color-primary: #1e1e1e,
+        background-color-secondary: #2d2d30,
+        accent-color: #3f3f3f,
+        text-primary-color: #fafafa
+);
+
+$themes: (
+        'light': $light-theme,
+        'dark': $dark-theme,
+);
+
