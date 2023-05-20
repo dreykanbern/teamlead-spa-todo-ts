@@ -3,21 +3,10 @@
     <div class="task-item">
       <div class="task-item__header">
         <!-- Использование вычисляемого свойства для определения значения чекбокса задачи -->
-        <my-checkbox type="checkbox" v-model="isTaskCompleted" />
+        <my-checkbox type="checkbox" v-model="isTaskCompleted" @change="updateSubtasksCheckbox" />
         <h3>{{ task.text }}</h3>
 
-        <div class="task-item__subtasks" v-if="task.subtasks && task.subtasks.length > 0">
-          <button @click="showSubtasks = !showSubtasks">
-            <!-- Иконка для раскрытия/скрытия списка подзадач -->
-            <i :class="['icon', subtasksIconClass]"></i>
-          </button>
-          <ul v-if="showSubtasks">
-            <li v-for="(subtask, index) in task.subtasks" :key="index">
-              <my-checkbox type="checkbox" v-model="subtask.completed" />
-              {{ subtask.text }}
-            </li>
-          </ul>
-        </div>
+        <subtasks-list :subtasks="task.subtasks" @toggle="toggleSubtask(task.id, $event)" v-if="task.subtasks && task.subtasks.length > 0" />
 
         <div class="task-item__header__actions">
           <button @click="editTask(task.id)">Редактировать</button>
@@ -29,45 +18,46 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue';
-import { useDark } from '@vueuse/core';
-import MyCheckbox from "../UI/MyCheckbox/MyCheckbox.vue";
+import { defineComponent, computed } from 'vue';
+import { useTasksStore } from '../../store/store.ts';
+import MyCheckbox from '../UI/MyCheckbox/MyCheckbox.vue';
+import SubtasksList from '../SubtasksList/SubtasksList.vue';
 
 export default defineComponent({
   name: 'TaskItem',
-  components: {MyCheckbox},
+  components: { MyCheckbox, SubtasksList },
   props: {
     task: {
       type: Object,
       required: true,
+      default: () => ({ text: "" }),
     },
   },
   emits: ['remove', 'edit'],
   setup(props, { emit }) {
-    const showSubtasks = ref(false);
-
-    // Определение текущей темы
-    const isDark = useDark({
-      selector: 'body',
-      attribute: 'data-theme',
-      valueDark: 'dark',
-      valueLight: 'light',
-    });
+    const tasksStore = useTasksStore();
+    const { subtasks } = props.task;
 
     // Вычисление значения чекбокса задачи
     const isTaskCompleted = computed({
       get: () =>
-          props.task.subtasks &&
-          props.task.subtasks.length > 0 &&
-          props.task.subtasks.every((subtask) => subtask.completed),
+          subtasks && subtasks.length > 0 && subtasks.every((subtask) => subtask.completed),
       set: (value) => {
-        if (props.task.subtasks && props.task.subtasks.length > 0) {
-          props.task.subtasks.forEach((subtask) => {
+        if (subtasks && subtasks.length > 0) {
+          subtasks.forEach((subtask) => {
             subtask.completed = value;
           });
         }
       },
     });
+
+    const updateSubtasksCheckbox = () => {
+      if (subtasks && subtasks.length > 0) {
+        subtasks.forEach((subtask) => {
+          subtask.completed = isTaskCompleted.value;
+        });
+      }
+    };
 
     const removeTask = (id: number) => {
       emit('remove', id);
@@ -77,20 +67,20 @@ export default defineComponent({
       emit('edit', id);
     };
 
-    // Вычисление класса иконки в зависимости от текущей темы и состояния showSubtasks
-    const subtasksIconClass = computed(() => {
-      let iconClass = showSubtasks.value
-          ? `icon-collapse-${isDark.value ? 'dark' : 'light'}`
-          : `icon-expand-${isDark.value ? 'dark' : 'light'}`;
-      return iconClass;
-    });
+    const toggleSubtask = (taskId, subtaskId) => {
+      tasksStore.toggleSubtask(taskId, subtaskId);
+      const subtask = subtasks.find((subtask) => subtask.id === subtaskId);
+      if (subtask) {
+        subtask.completed = !subtask.completed;
+      }
+    };
 
     return {
-      showSubtasks,
       isTaskCompleted,
       removeTask,
       editTask,
-      subtasksIconClass,
+      toggleSubtask,
+      updateSubtasksCheckbox,
     };
   },
 });

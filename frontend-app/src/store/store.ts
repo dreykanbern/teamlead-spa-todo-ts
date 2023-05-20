@@ -1,14 +1,16 @@
 import { defineStore } from 'pinia';
 
+interface Subtask {
+    id: number;
+    text: string;
+    completed: boolean;
+}
+
 interface Task {
     id: number;
     text: string;
     completed: boolean;
-    subtasks: {
-        id: number;
-        text: string;
-        completed: boolean;
-    }[];
+    subtasks: Subtask[];
     showSubtasks: boolean;
 }
 
@@ -16,61 +18,95 @@ export const useTasksStore = defineStore({
     id: 'tasks',
     state: () => ({
         tasks: [] as Task[],
-        // Добавление нового свойства для хранения удаленных задач
         deletedTasks: [] as Task[],
     }),
     actions: {
-        addTask(text: string, subtasksTexts: string[]) {
+        /**
+         * Добавление новой задачи
+         * @param text - текст задачи
+         * @param subtasksTexts - массив текстов подзадач
+         */
+        addTask(text: string, subtasksTexts: string[]): void {
             const newTask = {
                 id: Date.now(),
                 text,
                 completed: false,
-                subtasks: subtasksTexts.map((subtaskText: string) => ({
+                subtasks: subtasksTexts.map((subtaskText) => ({
                     id: Date.now(),
                     text: subtaskText,
                     completed: false,
                 })),
                 showSubtasks: false,
             };
-            this.tasks.push(newTask);
-            this.saveTasks();
+            const { tasks, saveTasks } = this;
+            tasks.push(newTask);
+            saveTasks();
         },
-        removeTask(id: number) {
-            // Сохранение удаленной задачи в свойстве deletedTasks
-            const deletedTask = this.tasks.find((task) => task.id === id);
+        /**
+         * Удаление задачи по ID
+         * @param id - ID задачи для удаления
+         */
+        removeTask(id: number): void {
+            const { tasks, deletedTasks, saveTasks } = this;
+            const deletedTask = tasks.find((task) => task.id === id);
             if (deletedTask) {
-                this.deletedTasks.push(deletedTask);
+                deletedTasks.push(deletedTask);
             }
-            this.tasks = this.tasks.filter((task) => task.id !== id);
-            this.saveTasks();
+            this.tasks = tasks.filter((task) => task.id !== id);
+            saveTasks();
         },
-        // Метод для удаления всех задач и подзадач
-        removeAllTasks() {
-            // Сохранение всех удаленных задач в свойстве deletedTasks
-            this.deletedTasks.push(...this.tasks);
+        /**
+         * Удаление всех задач и подзадач
+         */
+        removeAllTasks(): void {
+            const { tasks, deletedTasks, saveTasks } = this;
+            deletedTasks.push(...tasks);
             this.tasks = [];
-            this.saveTasks();
+            saveTasks();
         },
-        // Метод для восстановления удаленных задач
-        restoreDeletedTasks() {
-            this.tasks.push(...this.deletedTasks);
+        /**
+         * Восстановление удаленных задач
+         */
+        restoreDeletedTasks(): void {
+            const { tasks, deletedTasks, saveTasks } = this;
+            tasks.push(...deletedTasks);
             this.deletedTasks = [];
-            this.saveTasks();
+            saveTasks();
         },
-        saveTasks() {
-            localStorage.setItem('tasks', JSON.stringify(this.tasks));
-            // Сохранение удаленных задач в локальном хранилище
-            localStorage.setItem('deletedTasks', JSON.stringify(this.deletedTasks));
+        /**
+         * Сохранение задач в локальном хранилище
+         */
+        saveTasks(): void {
+            const { tasks, deletedTasks } = this;
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+            localStorage.setItem('deletedTasks', JSON.stringify(deletedTasks));
         },
-        loadTasks() {
-            const tasks = localStorage.getItem('tasks');
-            if (tasks) {
-                this.tasks = JSON.parse(tasks);
-            }
-            // Загрузка удаленных задач из локального хранилища
-            const deletedTasks = localStorage.getItem('deletedTasks');
-            if (deletedTasks) {
-                this.deletedTasks = JSON.parse(deletedTasks);
+        /**
+         * Загрузка задач из локального хранилища
+         */
+        loadTasks(): void {
+            const { tasks } = this;
+            const storedTasks = localStorage.getItem('tasks');
+            this.tasks = storedTasks ? JSON.parse(storedTasks) : tasks;
+
+            const { deletedTasks } = this;
+            const storedDeletedTasks = localStorage.getItem('deletedTasks');
+            this.deletedTasks = storedDeletedTasks ? JSON.parse(storedDeletedTasks) : deletedTasks;
+        },
+        /**
+         * Переключение состояния подзадачи (выполнена/не выполнена)
+         * @param taskId - ID задачи
+         * @param subtaskId - ID подзадачи
+         */
+        toggleSubtask(taskId: number, subtaskId: number): void {
+            const { tasks, saveTasks } = this;
+            const task = tasks.find((task) => task.id === taskId);
+            if (task && task.subtasks) {
+                const subtask = task.subtasks.find((subtask) => subtask.id === subtaskId);
+                if (subtask) {
+                    subtask.completed = !subtask.completed;
+                    saveTasks();
+                }
             }
         },
     },

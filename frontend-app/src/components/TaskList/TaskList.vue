@@ -5,7 +5,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, computed } from 'vue';
+import { useTasksStore } from '../../store/store.ts';
 import TaskItem from "../TaskItem/TaskItem.vue";
 
 export default defineComponent({
@@ -21,6 +22,8 @@ export default defineComponent({
   },
   emits: ['remove', 'edit'],
   setup(props, { emit }) {
+    const tasksStore = useTasksStore();
+    const tasks = computed(() => tasksStore.tasks);
     const removeTask = (id: number) => {
       emit('remove', id);
     };
@@ -31,7 +34,8 @@ export default defineComponent({
 
     return {
       removeTask,
-      editTask
+      editTask,
+      tasks,
     };
   }
 });
