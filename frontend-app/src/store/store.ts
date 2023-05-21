@@ -109,5 +109,17 @@ export const useTasksStore = defineStore({
                 }
             }
         },
+        /**
+         * Переключение состояния задачи (выполнена/не выполнена)
+         * @param taskId - ID задачи
+         */
+        toggleTask(taskId: number): void {
+            const {tasks, saveTasks} = this;
+            const task = tasks.find((task) => task.id === taskId);
+            if (task) {
+                task.completed = !task.completed;
+                saveTasks();
+            }
+        },
     },
 });

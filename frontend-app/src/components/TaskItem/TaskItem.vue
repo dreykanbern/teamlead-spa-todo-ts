@@ -20,6 +20,7 @@
 <script lang="ts">
 import { defineComponent, computed } from 'vue';
 import { useTasksStore } from '../../store/store.ts';
+import { useRouter } from 'vue-router';
 import MyCheckbox from '../UI/MyCheckbox/MyCheckbox.vue';
 import SubtasksList from '../SubtasksList/SubtasksList.vue';
 
@@ -35,6 +36,7 @@ export default defineComponent({
   },
   emits: ['remove', 'edit'],
   setup(props, { emit }) {
+    const router = useRouter();
     const tasksStore = useTasksStore();
     const { subtasks } = props.task;
 
@@ -64,7 +66,7 @@ export default defineComponent({
     };
 
     const editTask = (id: number) => {
-      emit('edit', id);
+      router.push(`/edit/${id}`);
     };
 
     const toggleSubtask = (taskId, subtaskId) => {

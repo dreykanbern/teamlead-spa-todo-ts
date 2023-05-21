@@ -39,7 +39,8 @@
 </template>
 
 <script setup lang="ts">
-import { defineComponent, ref, computed, onMounted } from 'vue';
+import { defineComponent, ref, computed, onMounted, } from 'vue';
+import { onBeforeRouteEnter } from 'vue-router';
 import { useTasksStore } from '../../store/store.ts';
 import { useDark, useToggle } from '@vueuse/core';
 import ToggleTheme from '../../components/UI/ToggleTheme/ToggleTheme.vue';
@@ -67,6 +68,10 @@ const iconClass = computed(() => (isDark.value ? 'dark-icon' : 'light-icon'));
 // Вызов метода loadData при монтировании компонента
 onMounted(() => {
   loadData();
+});
+
+onBeforeRouteEnter(() => {
+  tasksStore.loadTasks();
 });
 
 const loadData = () => {
