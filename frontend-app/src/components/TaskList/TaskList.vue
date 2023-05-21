@@ -14,12 +14,6 @@ export default defineComponent({
   components: {
     TaskItem
   },
-  props: {
-    tasks: {
-      type: Array,
-      required: true
-    }
-  },
   emits: ['remove', 'edit'],
   setup(props, { emit }) {
     const tasksStore = useTasksStore();

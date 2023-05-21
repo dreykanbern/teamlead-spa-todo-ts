@@ -31,7 +31,7 @@
         <add-task-form @add="addNewTask" />
       </template>
       <template #buttons>
-        <button @click="onCancelAdd">Закрыть</button>
+        <button @click="closeAddModal">Закрыть</button>
       </template>
     </my-modal>
 
@@ -39,8 +39,8 @@
 </template>
 
 <script setup lang="ts">
-import { defineComponent, ref, computed, onMounted, } from 'vue';
-import { onBeforeRouteEnter } from 'vue-router';
+import { defineComponent, ref, computed, onMounted } from 'vue';
+import { onBeforeRouteUpdate } from 'vue-router';
 import { useTasksStore } from '../../store/store.ts';
 import { useDark, useToggle } from '@vueuse/core';
 import ToggleTheme from '../../components/UI/ToggleTheme/ToggleTheme.vue';
@@ -55,6 +55,7 @@ defineComponent({
 });
 
 const tasksStore = useTasksStore();
+const { addTask, removeTask, removeAllTasks, restoreDeletedTasks } = tasksStore;
 
 const tasks = computed(() => tasksStore.tasks);
 
@@ -70,8 +71,8 @@ onMounted(() => {
   loadData();
 });
 
-onBeforeRouteEnter(() => {
-  tasksStore.loadTasks();
+onBeforeRouteUpdate(() => {
+  loadData();
 });
 
 const loadData = () => {
@@ -79,26 +80,21 @@ const loadData = () => {
 };
 
 const addNewTask = (text: string, subtasks: string[]) => {
-  tasksStore.addTask(text, subtasks);
+  addTask(text, subtasks);
 };
 
 const showDeleteModal = ref(false);
-let taskToDelete = ref(null);
 
 const confirmRemoveTask = (id: number) => {
   showDeleteModal.value = true;
-  taskToDelete.value = id;
+  removeTask(id);
 };
 
-const removeTask = (id: number) => {
-  tasksStore.removeTask(id);
-};
 const cancelRemoveTask = () => {
   showDeleteModal.value = false;
 };
 
 const onConfirm = () => {
-  removeTask(taskToDelete.value);
   showDeleteModal.value = false;
 };
 
@@ -110,21 +106,11 @@ const showAddModal = ref(false);
 
 const onConfirmAdd = () => {
   // Обработка добавления новой задачи
+  closeAddModal();
+};
+
+const closeAddModal = () => {
   showAddModal.value = false;
-};
-
-const onCancelAdd = () => {
-  showAddModal.value = false;
-};
-
-// Метод для удаления всех задач и подзадач
-const removeAllTasks = () => {
-  tasksStore.removeAllTasks();
-};
-
-// Метод для восстановления удаленных задач
-const restoreDeletedTasks = () => {
-  tasksStore.restoreDeletedTasks();
 };
 </script>
 

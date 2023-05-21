@@ -6,10 +6,10 @@
         <label for="task-text">Текст задачи:</label>
         <input id="task-text" v-model="taskText" />
       </div>
-      <!-- Добавление компонента MyCheckbox для изменения состояния выполнения задачи -->
+      <!-- Использование свойства taskCompleted для определения состояния выполнения задачи -->
       <div>
         <label for="task-completed">Задача выполнена:</label>
-        <MyCheckbox id="task-completed" v-model="allSubtasksCompleted" @change="toggleTask(taskId)" />
+        <MyCheckbox id="task-completed" v-model="taskCompleted" @change="toggleTask(taskId)" />
       </div>
       <div>
         <label for="subtasks">Подзадачи:</label>
@@ -27,7 +27,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue';
+import { defineComponent, ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useTasksStore } from '../../store/store.ts';
 import MyCheckbox from '../../components/UI/MyCheckbox/MyCheckbox.vue';
@@ -51,8 +51,16 @@ export default defineComponent({
     }
 
     const taskText = ref(task.text);
-    const taskCompleted = ref(task.completed);
     const subtasks = ref(task.subtasks);
+
+    // Использование вычисляемого свойства computed для хранения состояния выполнения задачи
+    const taskCompleted = computed(() =>
+        subtasks.value && subtasks.value.length > 0 && subtasks.value.every((subtask) => subtask.completed)
+    );
+
+    onMounted(() => {
+      tasksStore.loadTasks();
+    });
 
     const updateTask = () => {
       task.text = taskText.value;
@@ -73,10 +81,14 @@ export default defineComponent({
     // Добавление нового метода toggleTask
     const toggleTask = (taskId: number) => {
       tasksStore.toggleTask(taskId);
-    };
 
-    // Добавление нового вычисляемого свойства allSubtasksCompleted
-    const allSubtasksCompleted = computed(() => subtasks.value.every((subtask) => subtask.completed));
+      // Обновление локального состояния подзадач
+      if (subtasks.value) {
+        subtasks.value.forEach((subtask) => {
+          subtask.completed = taskCompleted.value;
+        });
+      }
+    };
 
     return {
       taskId,
@@ -92,6 +104,4 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss" scoped>
-@import "edit-task-page.scss";
-</style>
+<style lang="scss" scoped>@import "edit-task-page.scss";</style>

@@ -2,11 +2,11 @@
   <li>
     <div class="task-item">
       <div class="task-item__header">
-        <!-- Использование вычисляемого свойства для определения значения чекбокса задачи -->
-        <my-checkbox type="checkbox" v-model="isTaskCompleted" @change="updateSubtasksCheckbox" />
+        <!-- Использование свойства taskCompleted для определения состояния выполнения задачи -->
+        <my-checkbox type="checkbox" v-model="taskCompleted" @change="toggleTask(task.id)" />
         <h3>{{ task.text }}</h3>
 
-        <subtasks-list :subtasks="task.subtasks" @toggle="toggleSubtask(task.id, $event)" v-if="task.subtasks && task.subtasks.length > 0" />
+        <subtasks-list :subtasks="task.subtasks" @toggle="toggleSubtask(task.id, subtaskId)" v-if="task.subtasks && task.subtasks.length > 0" />
 
         <div class="task-item__header__actions">
           <button @click="editTask(task.id)">Редактировать</button>
@@ -18,7 +18,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from 'vue';
+import { defineComponent, computed, ref } from 'vue';
 import { useTasksStore } from '../../store/store.ts';
 import { useRouter } from 'vue-router';
 import MyCheckbox from '../UI/MyCheckbox/MyCheckbox.vue';
@@ -38,28 +38,14 @@ export default defineComponent({
   setup(props, { emit }) {
     const router = useRouter();
     const tasksStore = useTasksStore();
-    const { subtasks } = props.task;
 
-    // Вычисление значения чекбокса задачи
-    const isTaskCompleted = computed({
-      get: () =>
-          subtasks && subtasks.length > 0 && subtasks.every((subtask) => subtask.completed),
-      set: (value) => {
-        if (subtasks && subtasks.length > 0) {
-          subtasks.forEach((subtask) => {
-            subtask.completed = value;
-          });
-        }
-      },
-    });
+    // Использование локального состояния для хранения подзадач
+    const subtasks = ref(props.task.subtasks);
 
-    const updateSubtasksCheckbox = () => {
-      if (subtasks && subtasks.length > 0) {
-        subtasks.forEach((subtask) => {
-          subtask.completed = isTaskCompleted.value;
-        });
-      }
-    };
+    // Использование вычисляемого свойства computed для хранения состояния выполнения задачи
+    const taskCompleted = computed(() =>
+        subtasks.value && subtasks.value.length > 0 && subtasks.value.every((subtask) => subtask.completed)
+    );
 
     const removeTask = (id: number) => {
       emit('remove', id);
@@ -71,18 +57,31 @@ export default defineComponent({
 
     const toggleSubtask = (taskId, subtaskId) => {
       tasksStore.toggleSubtask(taskId, subtaskId);
-      const subtask = subtasks.find((subtask) => subtask.id === subtaskId);
-      if (subtask) {
-        subtask.completed = !subtask.completed;
+
+      // Обновление локального состояния подзадач
+      const task = tasksStore.tasks.find((task) => task.id === taskId);
+      if (task && task.subtasks) {
+        subtasks.value = task.subtasks;
+      }
+    };
+
+    // Добавление нового метода toggleTask
+    const toggleTask = (taskId) => {
+      tasksStore.toggleTask(taskId);
+
+      // Обновление локального состояния подзадач
+      const task = tasksStore.tasks.find((task) => task.id === taskId);
+      if (task && task.subtasks) {
+        subtasks.value = task.subtasks;
       }
     };
 
     return {
-      isTaskCompleted,
+      taskCompleted,
       removeTask,
       editTask,
       toggleSubtask,
-      updateSubtasksCheckbox,
+      toggleTask,
     };
   },
 });

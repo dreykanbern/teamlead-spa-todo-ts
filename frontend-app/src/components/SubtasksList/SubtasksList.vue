@@ -6,7 +6,12 @@
     </button>
     <ul v-show="showSubtasks">
       <li v-for="(subtask, index) in subtasks" :key="index">
-        <my-checkbox type="checkbox" v-model="subtask.completed" @change="$emit('toggle', subtask.id)" />
+        <my-checkbox
+            type="checkbox"
+            v-model="subtask.completed"
+            @change="$emit('toggle', subtask.id)"
+            @update:modelValue="onUpdateModelValue"
+        />
         {{ subtask.text }}
       </li>
     </ul>
@@ -46,9 +51,15 @@ export default defineComponent({
             : `icon-expand-${isDark.value ? 'dark' : 'light'}`
     );
 
+    // Добавленный метод для обработки события update:modelValue
+    function onUpdateModelValue(value: boolean) {
+      console.log('SubtasksList onUpdateModelValue called with', value);
+    }
+
     return {
       showSubtasks,
       subtasksIconClass,
+      onUpdateModelValue, // Добавленная строка
     };
   },
 });

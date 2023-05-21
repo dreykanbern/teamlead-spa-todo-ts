@@ -1,6 +1,10 @@
 <template>
   <label class="checkbox-container">
-    <input type="checkbox" :checked="modelValue" @change="$emit('update:modelValue', $event.target.checked)" />
+    <input
+        type="checkbox"
+        :checked="modelValue"
+        @change="onChange"
+    />
     <span class="checkmark"></span>
   </label>
 </template>
@@ -17,6 +21,12 @@ export default defineComponent({
     },
   },
   emits: ['update:modelValue'],
+  methods: {
+    onChange(event: Event) {
+      console.log('MyCheckbox onChange called with', event.target.checked); // Добавленная строка
+      this.$emit('update:modelValue', event.target.checked);
+    },
+  },
 });
 </script>
 
