@@ -17,10 +17,11 @@
   margin: 15% auto;
   padding: 20px;
   border: 1px solid #888;
-  width: 80%;
+  width: $container-with;
 }
 
 .modal-buttons {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  margin-top: 20px;
 }

@@ -1,5 +1,5 @@
 <template>
-  <ul>
+  <ul class="task-list-wrapper">
     <task-item v-for="task in tasks" :key="task.id" :task="task" @remove="removeTask" @edit="editTask" />
   </ul>
 </template>
@@ -34,3 +34,7 @@ export default defineComponent({
   }
 });
 </script>
+
+<style lang="scss" scoped>
+@import "task-list";
+</style>

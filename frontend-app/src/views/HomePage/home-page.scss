@@ -34,6 +34,11 @@
   background-image: $light-mode-delete-all-icon;
 }
 
+.button-false:hover .delete-all-icon.light-icon {
+  background-image: $dark-mode-delete-all-icon;
+  transition: all 0.3s ease;
+}
+
 //При переключении на темную тему
 
 .delete-all-icon.dark-icon {

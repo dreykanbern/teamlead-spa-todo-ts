@@ -1,24 +1,16 @@
 @import "../../styles/variables.scss";
 @import "../../styles/mixins.scss";
 
-.icon {
+.subtasks-list-wrapper {
   display: flex;
-  width: 20px;
-  height: 24px;
+  flex-direction: column;
+  gap: 10px;
+  &__subtasks-list {
+    display: flex;
+    width: 100%;
+    position: relative;
+    align-items: center;
+    gap: 10px;
+  }
 }
 
-//Для светлой темы
-.icon.icon-collapse-light {
-  background-image: $dark-mode-collapse-icon;
-}
-.icon.icon-expand-light {
-  background-image: $dark-mode-expand-icon;
-}
-
-//Для темной темы
-.icon.icon-collapse-dark {
-  background-image: $light-mode-collapse-icon;
-}
-.icon.icon-expand-dark {
-  background-image: $light-mode-expand-icon;
-}

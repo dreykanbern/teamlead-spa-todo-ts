@@ -1,17 +1,29 @@
 <template>
   <li>
-    <div class="task-item">
-      <div class="task-item__header">
-        <!-- Использование свойства taskCompleted для определения состояния выполнения задачи -->
-        <my-checkbox type="checkbox" v-model="taskCompleted" @change="toggleTask(task.id)" />
-        <h3>{{ task.text }}</h3>
-
-        <subtasks-list :subtasks="task.subtasks" @toggle="toggleSubtask(task.id, subtaskId)" v-if="task.subtasks && task.subtasks.length > 0" />
-
-        <div class="task-item__header__actions">
-          <button @click="editTask(task.id)">Редактировать</button>
-          <button @click="removeTask(task.id)">Удалить</button>
+    <div class="task-item" @click="showSubtasks = !showSubtasks">
+      <div class="task-and-subtasks">
+        <div class="task-item__header">
+          <my-checkbox type="checkbox" v-model="taskCompleted" @change="toggleTask(task.id)" />
+          <h3 :class="{ 'completed': taskCompleted }">
+            {{ task.text }}
+            <span v-if="task.subtasks && task.subtasks.length > 0">
+              ({{ completedSubtasks }}/{{ task.subtasks.length }})
+            </span>
+          </h3>
+          <i v-show="task.subtasks && task.subtasks.length > 0" :class="['icon', subtasksIconClass]"></i>
         </div>
+
+        <subtasks-list
+            :subtasks="task.subtasks"
+            @toggle="(subtaskId) => toggleSubtask(task.id, subtaskId)"
+            v-if="task.subtasks && task.subtasks.length > 0"
+            :show="showSubtasks"
+        />
+      </div>
+
+      <div class="task-item__header__actions">
+        <button class="button-true" @click.stop="editTask(task.id)">Редактировать</button>
+        <button class="button-false" @click.stop="removeTask(task.id)">Удалить</button>
       </div>
     </div>
   </li>
@@ -21,6 +33,7 @@
 import { defineComponent, computed, ref } from 'vue';
 import { useTasksStore } from '../../store/store.ts';
 import { useRouter } from 'vue-router';
+import { useDark } from '@vueuse/core';
 import MyCheckbox from '../UI/MyCheckbox/MyCheckbox.vue';
 import SubtasksList from '../SubtasksList/SubtasksList.vue';
 
@@ -31,7 +44,7 @@ export default defineComponent({
     task: {
       type: Object,
       required: true,
-      default: () => ({ text: "" }),
+      default: () => ({ text: '' }),
     },
   },
   emits: ['remove', 'edit'],
@@ -43,9 +56,31 @@ export default defineComponent({
     const subtasks = ref(props.task.subtasks);
 
     // Использование вычисляемого свойства computed для хранения состояния выполнения задачи
-    const taskCompleted = computed(() =>
-        subtasks.value && subtasks.value.length > 0 && subtasks.value.every((subtask) => subtask.completed)
+    const taskCompleted = computed(() => props.task.completed);
+
+    // Добавление локального состояния для управления отображением подробностей задачи
+    const showSubtasks = ref(false);
+
+    // Определение текущей темы
+    const isDark = useDark({
+      selector: 'body',
+      attribute: 'data-theme',
+      valueDark: 'dark',
+      valueLight: 'light',
+    });
+
+    // Вычисление класса иконки в зависимости от текущей темы и состояния showSubtasks
+    const subtasksIconClass = computed(() =>
+        showSubtasks.value
+            ? `icon-collapse-${isDark.value ? 'dark' : 'light'}`
+            : `icon-expand-${isDark.value ? 'dark' : 'light'}`
     );
+
+    // Вычисление количества выполненных подзадач
+    const completedSubtasks = computed(() => {
+      if (!subtasks.value) return 0;
+      return subtasks.value.filter((subtask) => subtask.completed).length;
+    });
 
     const removeTask = (id: number) => {
       emit('remove', id);
@@ -56,16 +91,17 @@ export default defineComponent({
     };
 
     const toggleSubtask = (taskId, subtaskId) => {
+      console.log('toggleSubtask called with', taskId, subtaskId);
       tasksStore.toggleSubtask(taskId, subtaskId);
 
       // Обновление локального состояния подзадач
       const task = tasksStore.tasks.find((task) => task.id === taskId);
       if (task && task.subtasks) {
+        console.log('task and task.subtasks found');
         subtasks.value = task.subtasks;
       }
     };
 
-    // Добавление нового метода toggleTask
     const toggleTask = (taskId) => {
       tasksStore.toggleTask(taskId);
 
@@ -82,9 +118,14 @@ export default defineComponent({
       editTask,
       toggleSubtask,
       toggleTask,
+      showSubtasks,
+      subtasksIconClass,
+      completedSubtasks,
     };
   },
 });
 </script>
 
-<style lang="scss" scoped>@import 'task-item.scss';</style>
+<style lang="scss" scoped>
+@import 'task-item.scss';
+</style>

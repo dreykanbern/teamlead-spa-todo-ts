@@ -4,6 +4,7 @@
 
 *{
   font-family: $font-family;
+  box-sizing: border-box;
 }
 
 button {
@@ -37,6 +38,21 @@ body {
     color: map-get($values, text-primary-color);
     transition: all 0.3s ease;
   }
+
+  body[data-theme='#{$theme}'] .edit-form {
+    background-color: map-get($values, background-color-secondary);
+    border: 1px solid map-get($values, accent-color);
+    transition: all 0.3s ease;
+  }
+
+
+  body[data-theme='#{$theme}'] button:disabled {
+    background-color: map-get($values, accent-color);;
+    color: $disabled-color;
+    cursor: not-allowed;
+    transition: all 0.3s ease;
+  }
+
   body[data-theme='#{$theme}'] div.modal-content {
     background-color: map-get($values, background-color-secondary);
     color: map-get($values, text-primary-color);
@@ -60,4 +76,81 @@ body {
     background-color: map-get($values, accent-color);
     transition: all 0.3s ease;
   }
+
+  body[data-theme='#{$theme}'] .task-item {
+    background-color: map-get($values, background-color-secondary);
+    border: 1px solid map-get($values, accent-color);
+  }
 }
+
+//Инпуты
+
+input[type="text"] {
+  width: fit-content;
+  padding: 12px 20px;
+  box-sizing: border-box;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+/* Изменение стиля инпута при наведении */
+input[type="text"]:hover {
+  border: 2px solid #555;
+  transition: all 0.3s ease;
+}
+
+/* Изменение стиля инпута при фокусе */
+input[type="text"]:focus {
+  border: 2px solid #555;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+//Кнопка в состоянии disabled
+
+button:disabled,button[disabled] {
+  background-color: #cccccc ;
+  color: #666666 ;
+  cursor: not-allowed;
+  transition: all 0.3s ease;
+}
+
+ul,
+ol {
+  list-style: none;
+  padding: 0;
+}
+
+h3 {
+  margin: 0;
+}
+
+//Чекбоксы
+
+.checkbox-container {
+  display: flex;
+  width: 25px;
+  height: 25px;
+  padding-left: 0;
+}
+
+span.checkmark {
+  display: flex;
+  position: relative;
+}
+
+//Кнопки подвердить и закрыть
+
+.button-true:hover {
+  color: white;
+  background-color: $primary-color;
+  transition: all 0.3s ease;
+}
+
+.button-false:hover {
+  color: white;
+  background-color: $warning-color;
+  transition: all 0.3s ease;
+}
+

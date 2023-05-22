@@ -2,6 +2,8 @@
 
 $primary-color: #42b983;
 $secondary-color: #35495e;
+$warning-color: #b94242;
+$disabled-color: #888888;
 
 //Значения кнопок
 $button-padding: 10px;
@@ -72,3 +74,12 @@ $themes: (
 }
 
 $font-family: 'Roboto', sans-serif;
+
+
+//Состояние завершения задачи для текста
+
+.completed {
+  text-decoration: line-through;
+  color: $disabled-color;
+  transition: all 0.3s ease;
+}

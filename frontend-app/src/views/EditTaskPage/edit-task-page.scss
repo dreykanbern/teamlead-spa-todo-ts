@@ -1,2 +1,43 @@
 @import "/src/styles/variables.scss";
 @import "/src/styles/mixins.scss";
+
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  border-radius: $button-border-radius;
+  padding: 20px;
+  &__header {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    height: 50px;
+    width: max-content;
+  }
+  &__subtasks {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  &__add-subtask-form {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  &__buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+  }
+}
+
+.subtask-item {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.add-subtask-button {
+  display: flex;
+  gap: 10px;
+}

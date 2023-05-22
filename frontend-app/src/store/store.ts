@@ -148,6 +148,23 @@ export const useTasksStore = defineStore({
                 saveTasks();
             }
         },
+        /**
+         * Обновление задачи с новыми значениями
+         * @param taskId - ID задачи для обновления
+         * @param newText - новый текст задачи
+         * @param newCompleted - новое состояние выполнения задачи
+         * @param newSubtasks - новый массив подзадач
+         */
+        updateTask(taskId: number, newText: string, newCompleted: boolean, newSubtasks: Subtask[]): void {
+            const { tasks } = this;
+            const task = tasks.find((task) => task.id === taskId);
+            if (task) {
+                task.text = newText;
+                task.completed = newCompleted;
+                task.subtasks = newSubtasks;
+                this.saveTasks();
+            }
+        }
     },
 
 });

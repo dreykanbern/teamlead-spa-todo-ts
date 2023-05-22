@@ -1,26 +1,18 @@
 <template>
-  <div class="task-item__subtasks">
-    <button @click="showSubtasks = !showSubtasks">
-      <!-- Иконка для раскрытия/скрытия списка подзадач -->
-      <i :class="['icon', subtasksIconClass]"></i>
-    </button>
-    <ul v-show="showSubtasks">
-      <li v-for="(subtask, index) in subtasks" :key="index">
-        <my-checkbox
-            type="checkbox"
-            v-model="subtask.completed"
-            @change="$emit('toggle', subtask.id)"
-            @update:modelValue="onUpdateModelValue"
-        />
-        {{ subtask.text }}
-      </li>
-    </ul>
-  </div>
+  <ul v-show="show" class="subtasks-list-wrapper">
+    <li v-for="subtask in subtasks" :key="subtask.id" class="subtasks-list-wrapper__subtasks-list">
+      <my-checkbox
+          type="checkbox"
+          :model-value="subtask.completed"
+          @update:model-value="(value) => onUpdateModelValue(subtask.id, value)"
+      />
+      <span :class="{ 'completed': subtask.completed }">{{ subtask.text }}</span>
+    </li>
+  </ul>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue';
-import { useDark } from '@vueuse/core';
+import { defineComponent } from 'vue';
 import MyCheckbox from '../UI/MyCheckbox/MyCheckbox.vue';
 
 export default defineComponent({
@@ -31,40 +23,22 @@ export default defineComponent({
       type: Array,
       required: true,
     },
+    show: {
+      type: Boolean,
+      required: true,
+    },
   },
   emits: ['toggle'],
-  setup() {
-    const showSubtasks = ref(false);
-
-    // Определение текущей темы
-    const isDark = useDark({
-      selector: 'body',
-      attribute: 'data-theme',
-      valueDark: 'dark',
-      valueLight: 'light',
-    });
-
-    // Вычисление класса иконки в зависимости от текущей темы и состояния showSubtasks
-    const subtasksIconClass = computed(() =>
-        showSubtasks.value
-            ? `icon-collapse-${isDark.value ? 'dark' : 'light'}`
-            : `icon-expand-${isDark.value ? 'dark' : 'light'}`
-    );
-
-    // Добавленный метод для обработки события update:modelValue
-    function onUpdateModelValue(value: boolean) {
-      console.log('SubtasksList onUpdateModelValue called with', value);
-    }
-
-    return {
-      showSubtasks,
-      subtasksIconClass,
-      onUpdateModelValue, // Добавленная строка
-    };
+  methods: {
+    onUpdateModelValue(subtaskId, value) {
+      console.log('onUpdateModelValue called with', subtaskId, value); // Добавленная строка
+      this.$emit('toggle', subtaskId);
+    },
   },
 });
+
 </script>
 
 <style lang="scss" scoped>
-@import "subtasks-list.scss";
+@import 'subtasks-list.scss';
 </style>
